@@ -17,6 +17,8 @@ class User(Base):
 
     id = Column(String(22), primary_key=True, index=True, unique=True, default=shortuuid.uuid)
     name = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False, unique=True, index=True)  # Extra unique field for use in signing in
+    password = Column(String(255), nullable=False)
     dob = Column(Date, nullable=False)
     address = Column(String(255), nullable=False)
     description = Column(String(255), nullable=True)
