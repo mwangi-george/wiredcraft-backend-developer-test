@@ -1,5 +1,8 @@
 import os
 from dotenv import load_dotenv
+from loguru import logger
+
+# load environment variables from .env fine
 load_dotenv()
 
 
@@ -9,6 +12,10 @@ class EnvVars:
 
     Environment variables are classified based on the mode the app will be running - either "dev" or "prod
     """
+
+    # cross-mode variables
+    ALGORITHM = os.getenv("ALGORITHM")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
     def __init__(self, running_in_production: bool = False) -> None:
         """Initialize the class instance in development mode"""
@@ -20,7 +27,16 @@ class EnvVars:
 
     @property
     def db_url(self) -> str:
-        return self._get_env_var("DEV_DB_URL", "PROD_DB_URL")
+        return self._get_env_var("PROD_DB_URL", "DEV_DB_URL")
+
+    @property
+    def access_token_expiry_in_minutes(self) -> int:
+        return int(self._get_env_var("PROD_ACCESS_TOKEN_EXPIRY_TIME_IN_MINUTES", "DEV_ACCESS_TOKEN_EXPIRY_TIME_IN_MINUTES"))
+
+    @property
+    def password_reset_token_expiry_in_minutes(self) -> int:
+        return int(self._get_env_var("PROD_PASSWORD_RESET_TOKEN_EXPIRY_IN_MINUTES", "DEV_ACCESS_TOKEN_EXPIRY_TIME_IN_MINUTES"))
 
 
-env_vars = EnvVars()
+env_vars = EnvVars(running_in_production=False)
+logger.info(f"Running in production mode: {env_vars.running_in_production}")
