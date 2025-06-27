@@ -42,5 +42,11 @@ def create_users_router() -> APIRouter:
         response = await user_service.handle_get_user_by_id(user_id, db)
         return response
 
+    @router.get("/all", response_model=list[UserInfo], status_code=status.HTTP_200_OK)
+    async def get_all_users(start: int, limit: int, db: AsyncSession = Depends(get_db)) -> list[UserInfo]:
+        """Endpoint to retrieve all users - paginated"""
+        response = await user_service.handle_get_all_users(start, limit, db)
+        return response
+
 
     return router

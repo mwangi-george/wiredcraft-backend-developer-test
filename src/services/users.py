@@ -160,5 +160,10 @@ class UserService:
                 detail="Could not fetch user. Please try again or contact support."
             )
 
+    @staticmethod
+    async def handle_get_all_users(start: int, limit: int, db: AsyncSession) -> list[UserInfo]:
+        """Function to fetch all users"""
+        ...
+
 
 user_service = UserService()
