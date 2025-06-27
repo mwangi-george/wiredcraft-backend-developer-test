@@ -10,7 +10,7 @@ class EnvVars:
     """
     Class for managing environment variables.
 
-    Environment variables are classified based on the mode the app will be running - either "dev" or "prod
+    Environment variables are classified based on the mode the app is running in- either "dev" or "prod
     """
 
     # cross-mode variables
@@ -39,4 +39,3 @@ class EnvVars:
 
 
 env_vars = EnvVars(running_in_production=False)
-logger.info(f"Running in production mode: {env_vars.running_in_production}")

@@ -1,5 +1,8 @@
 from fastapi import FastAPI
+from loguru import logger
+
 from src.routes import user_router
+from src.config import env_vars
 
 
 def create_app() -> FastAPI:
@@ -26,5 +29,6 @@ def create_app() -> FastAPI:
     return server
 
 
-# Application entrypoint
-app = create_app()
+logger.debug(f"Running in production mode: {env_vars.running_in_production}")
+
+app = create_app()  # Application entrypoint

@@ -19,14 +19,14 @@ class AccessTokenPurpose(str, enum.Enum):
 
 
 class Security:
-    """Main security class providing methods for handling app security function."""
+    """Main security class providing methods for handling app security functionality."""
 
     # OAuth2PasswordBearer is a class provided by FastAPI that facilitates implementing the OAuth 2.0 password flow for token-based authentication, by declaring a security scheme that expects a bearer token in the Authorization header.
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/users/login")
 
     @staticmethod
     def get_password_hash(password: str) -> str:
-        """Function to hash a string password."""
+        """Function to hash a password."""
         try:
             encoded_password = password.encode("utf-8")
             hashed_password = bcrypt.hashpw(encoded_password, bcrypt.gensalt())
@@ -37,7 +37,7 @@ class Security:
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
-        """Function to verify a string password."""
+        """Function to verify a password if it matches with the hashed password in the database."""
         try:
             return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
         except Exception as e:
@@ -46,7 +46,7 @@ class Security:
 
     @staticmethod
     async def get_user_by_email(email: str, db: AsyncSession) -> User | None:
-        """Function to get a user by id."""
+        """Function to retrieve a user by id."""
         db_results = await db.execute(select(User).where(User.email == email))
         user=db_results.scalars().one_or_none()
         return user

@@ -62,14 +62,37 @@ class UserFieldsEnum(str, enum.Enum):
 
 
 class UpdateUser(BaseModel):
+    user_id: str  # field to use in updating
     field: UserFieldsEnum
     value: str | date
 
     model_config = {
         "json_schema_extra": {
             "example": {
+                "user_id": "HCxFdfvYCBrK45sFTEo9wH",
                 "field": "email",
                 "value": "john.doe@gmail.com",
+            }
+        }
+    }
+
+
+class UserInfo(BaseModel):
+    email: str
+    name: str
+    dob: date
+    address: str
+    description: str
+
+    model_config = {
+        "from_attributes": True,
+        "json_schema_extra": {
+            "example": {
+                "email": "<EMAIL>",
+                "name": "<NAME>",
+                "dob": "1970-01-01",
+                "address": "123 Main St.",
+                "description": "A passionate software engineer",
             }
         }
     }

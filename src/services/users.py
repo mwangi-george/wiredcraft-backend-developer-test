@@ -1,18 +1,19 @@
 from fastapi import HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from loguru import logger
 
 from src.config.security import security, AccessTokenPurpose
 from src.database import User
-from src.schemas.users import NewUser, TextResponse, LoginResponse, UpdateUser
+from src.schemas.users import NewUser, TextResponse, LoginResponse, UpdateUser, UserInfo
 
 
 class UserService:
     """Class for user management business logic"""
 
     @staticmethod
-    async def create_user(new_user: NewUser, db: AsyncSession) -> TextResponse:
+    async def handle_create_user(new_user: NewUser, db: AsyncSession) -> TextResponse:
         """Function to persist new user to database"""
 
         # step 1: Check if email is already taken
@@ -49,7 +50,7 @@ class UserService:
                 detail="Could not create new user. Please try again or contact support.")
 
     @staticmethod
-    async def login_user(email: str, password: str, db: AsyncSession) -> LoginResponse:
+    async def handle_login_user(email: str, password: str, db: AsyncSession) -> LoginResponse:
         """Function to log in a user"""
 
         # step 1: authenticate
@@ -65,10 +66,11 @@ class UserService:
         return response
 
     @staticmethod
-    async def update_user(user_email: str, updated_data: UpdateUser, db: AsyncSession) -> TextResponse:
+    async def handle_update_user(updated_data: UpdateUser, db: AsyncSession) -> TextResponse:
         """Function to update an existing user's data"""
         # step 1: retrieve user's data
-        existing_user = await security.get_user_by_email(user_email, db)
+        db_results = await db.execute(select(User).filter_by(id=updated_data.user_id))
+        existing_user = db_results.scalars().one_or_none()
         if not existing_user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist")
 
@@ -102,7 +104,61 @@ class UserService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Could not update user. Please try again or contact support.")
 
+    @staticmethod
+    async def handle_remove_user(user_id: str, db: AsyncSession) -> TextResponse:
+        """Function to remove a logged-in user"""
 
+        # step 1: Check if user exists
+        db_results = await db.execute(select(User).filter_by(id=user_id))
+        user = db_results.scalars().one_or_none()
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist")
+
+        # step 2: remove user from db if they exist
+        try:
+            await db.delete(user)
+            await db.commit()
+
+            # step 3: format the confirmation message
+            return TextResponse(detail=f"User with id {user_id} removed successfully")
+        except SQLAlchemyError as s:
+            logger.exception(f"SQLAlchemyError occurred: {str(s)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Could not remove user. Please try again or contact support."
+            )
+        except Exception as e:
+            logger.exception(f"Unexpected error occurred: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Could not remove user. Please try again or contact support."
+            )
+
+    @staticmethod
+    async def handle_get_user_by_id(user_id: str, db: AsyncSession) -> UserInfo:
+        """Function to fetch a user's information"""
+
+        try:
+            # step 1: fetch user from database
+            db_results = await db.execute(select(User).filter_by(id=user_id))
+            user = db_results.scalars().one_or_none()
+            if not user:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist")
+
+            # step 2: return validated user data
+            return UserInfo(**user.__dict__)
+        except SQLAlchemyError as s:
+            logger.exception(f"SQLAlchemyError occurred: {str(s)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Could not fetch user. Please try again or contact support."
+            )
+        except Exception as e:
+            logger.exception(f"Unexpected error occurred: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Could not fetch user. Please try again or contact support."
+            )
 
 
 user_service = UserService()
