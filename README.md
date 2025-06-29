@@ -4,13 +4,13 @@ Welcome to the Wiredcraft Users API project! This API provides robust user manag
 
 ## Features
 
--   User Registration: Register new users securely.
+-   **User Registration**: Register new users securely.
 
--   User Authentication: Log in users with password authentication.
+-   **User Authentication**: Log in users with password authentication.
 
--   User Management: Update user details, remove users, and fetch user information.
+-   **User Management**: Update user details, remove users, and fetch user information.
 
--   Secure Endpoints: Access endpoints securely using OAuth2.
+-   **Secure Endpoints**: Access endpoints securely using OAuth2.
 
 ## Technologies Used
 
