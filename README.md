@@ -2,6 +2,8 @@
 
 Welcome to the Wiredcraft Users API project! This API provides robust user management functionality built on **FastAPI, SQLAlchemy, Alembic, asyncpg, and PostgreSQL.**
 
+![api-snapshot.png](src/api-snapshot.png)
+
 ## Features
 
 -   **User Registration**: Register new users securely. User details include: id, name, email, password, dob, address & description.
