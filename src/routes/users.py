@@ -42,10 +42,24 @@ def create_users_router() -> APIRouter:
         response = await user_service.handle_fetch_all_users(start=start, limit=limit, db=db)
         return response
 
-    @router.get("/{user_id}", response_model=UserInfo, status_code=status.HTTP_200_OK)
-    async def get_user(user_id: str, db: AsyncSession = Depends(get_db)) -> UserInfo:
+    @router.get("/user", response_model=UserInfo, status_code=status.HTTP_200_OK)
+    async def get_user_by_id(user_id: str, db: AsyncSession = Depends(get_db)) -> UserInfo:
         """Endpoint to retrieve a user's information"""
         response = await user_service.handle_get_user_by_id(user_id, db)
+        return response
+
+    return router
+
+
+def create_secure_endpoint_router() -> APIRouter:
+    """Function to create the secure user management endpoints"""
+    router = APIRouter(prefix="/api/v1/me", tags=["Secure User Management"])
+
+    # example secure router endpoint
+    @router.get("/", response_model=UserInfo, status_code=status.HTTP_200_OK)
+    async def logged_in_user(db: AsyncSession = Depends(get_db), user: User = Depends(security.get_current_user)) -> UserInfo:
+        """Endpoint to retrieve a logged-in user"""
+        response = await user_service.handle_get_user_by_id(user.id, db)
         return response
 
     return router

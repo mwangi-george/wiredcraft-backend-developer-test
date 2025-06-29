@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from loguru import logger
 
-from src.routes import user_router
+from src.routes import user_router, secure_endpoint_router
 from src.config import env_vars
 
 
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
 
     # include routers to the app instance
     server.include_router(user_router())
+    server.include_router(secure_endpoint_router())
 
     return server
 

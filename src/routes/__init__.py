@@ -1,1 +1,1 @@
-from .users import create_users_router as user_router
+from .users import create_users_router as user_router, create_secure_endpoint_router as secure_endpoint_router
