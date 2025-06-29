@@ -36,7 +36,7 @@ Ensure you have the following installed:
 
 -   Python 3.10+
 -   PostgreSQL
--   uv installed
+-   uv
 
 ## Installation
 
