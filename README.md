@@ -4,7 +4,7 @@ Welcome to the Wiredcraft Users API project! This API provides robust user manag
 
 ## Features
 
--   **User Registration**: Register new users securely.
+-   **User Registration**: Register new users securely. User details include: id, name, email, password, dob, address & description.
 
 -   **User Authentication**: Log in users with password authentication.
 
@@ -24,6 +24,8 @@ Welcome to the Wiredcraft Users API project! This API provides robust user manag
 
 -   **PostgreSQL**: Powerful, open-source relational database.
 
+-   **UV**: Modern, high-performance Python package manager and installer
+
 ## Getting Started
 
 **Prerequisites**
@@ -40,6 +42,7 @@ Clone the repository:
 
 ```         
 git clone https://github.com/mwangi-george/wiredcraft-backend-developer-test.git
+
 cd wiredcraft-backend-developer-test
 ```
 
@@ -129,5 +132,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Contact
 
 **Author**: George Mwangi
+
 **Email**: mwangigeorge648@gmail.com
+
+**Note**: This project was developed in response to the [Wiredcraft backend test](https://github.com/Wiredcraft/test-backend).
 
