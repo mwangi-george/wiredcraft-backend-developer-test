@@ -137,5 +137,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Email**: mwangigeorge648@gmail.com
 
-**Note**: This project was developed in response to the [Wiredcraft backend test](https://github.com/Wiredcraft/test-backend).
+**Note**: I created this project in response to the [Wiredcraft backend test](https://github.com/Wiredcraft/test-backend).
 
