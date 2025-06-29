@@ -48,14 +48,22 @@ git clone https://github.com/mwangi-george/wiredcraft-backend-developer-test.git
 cd wiredcraft-backend-developer-test
 ```
 
-## Install dependencies using uv:
+## Running the Application
+
+1. Create and activate a virtual environment
+``` 
+uv venv
+
+source .venv/bin/activate
+```
+
+2. Install dependencies using uv:
 
 ```         
 uv pip install -r requirements.txt 
 ```
 
-## Running the Application
-1. Set up your environment variables. Example .env file:
+3. Set up your environment variables. Example .env file:
 
 ```
 DEV_DB_URL=postgresql://username:password@localhost/dev_db
@@ -72,19 +80,19 @@ JWT_SECRET_KEY=mysecretkey
 
 ```
 
-2. Run database migrations with Alembic:
+4. Run database migrations with Alembic:
 
 ``` 
 alembic upgrade head
 ```
 
-3. Start the FastAPI server:
+5. Start the FastAPI server:
 
 ```
 uvicorn main:app --reload --port 8000
 ```
 
-4. Visit http://localhost:8000/docs for Swagger UI or http://localhost:8000/redoc for ReDoc to explore the API.
+6. Visit http://localhost:8000/docs for Swagger UI or http://localhost:8000/redoc for ReDoc to explore the API.
 
 ## Configuration
 
