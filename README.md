@@ -51,7 +51,7 @@ cd wiredcraft-backend-developer-test
 ## Install dependencies using uv:
 
 ```         
-uv install
+uv pip install -r requirements.txt 
 ```
 
 ## Running the Application
