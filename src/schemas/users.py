@@ -16,13 +16,30 @@ class TextResponse(BaseModel):
     }
 
 
+class UserAddress(BaseModel):
+    """Used for formatting user address."""
+    name: str
+    latitude: float
+    longitude: float
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "name": "123 Main St.",
+                "latitude": 40.75,
+                "longitude": -73.75,
+            }
+        }
+    }
+
+
 class NewUser(BaseModel):
     """Class contains information required to create a new user"""
     email: EmailStr
     password: str = Field(min_length=8, max_length=30)
     name: str = Field(min_length=4, max_length=30)
     dob: date = Field(default=date.today())
-    address: str = Field(max_length=255)
+    address: UserAddress | None = Field(default=None)
     description: str = Field(max_length=255)
 
     model_config = {
@@ -32,7 +49,11 @@ class NewUser(BaseModel):
                 "password": "qwerty1234",
                 "name": "John Doe",
                 "dob": "1970-01-01",
-                "address": "123 Main St.",
+                "address": {
+                    "name": "123 Main St.",
+                    "latitude": 40.75,
+                    "longitude": -73.75,
+                },
                 "description": "A passionate software engineer",
             }
         }
@@ -57,7 +78,6 @@ class UserFieldsEnum(str, enum.Enum):
     email = "email"
     name = "name"
     dob = "dob"
-    address = "address"
     description = "description"
 
 
@@ -81,7 +101,7 @@ class UserInfo(BaseModel):
     email: str
     name: str
     dob: date
-    address: str
+    address: dict
     description: str
 
     model_config = {
@@ -91,7 +111,11 @@ class UserInfo(BaseModel):
                 "email": "<EMAIL>",
                 "name": "<NAME>",
                 "dob": "1970-01-01",
-                "address": "123 Main St.",
+                "address": {
+                    "name": "123 Main St.",
+                    "latitude": 40.75,
+                    "longitude": -73.75,
+                },
                 "description": "A passionate software engineer",
             }
         }

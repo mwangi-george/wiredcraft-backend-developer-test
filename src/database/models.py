@@ -1,6 +1,6 @@
 import datetime
 import shortuuid
-from sqlalchemy import Column, String, Date
+from sqlalchemy import Column, String, Date, JSON
 from sqlalchemy.ext.declarative import declarative_base
 
 # Define base class for which all database models will inherit from
@@ -20,7 +20,7 @@ class User(Base):
     email = Column(String(255), nullable=False, unique=True, index=True)  # Extra unique field for use in signing in
     password = Column(String(255), nullable=False)  # Extra field for use in signing
     dob = Column(Date, nullable=False)
-    address = Column(String(255), nullable=False)
+    address = Column(JSON, nullable=True)
     description = Column(String(255), nullable=True)
     created_at = Column(Date, nullable=False, default=datetime.datetime.now)
     updated_at = Column(Date, nullable=False, default=datetime.datetime.now, onupdate=datetime.datetime.now)

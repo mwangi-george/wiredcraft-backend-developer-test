@@ -54,12 +54,12 @@ class UserService:
         """Function to log in a user"""
 
         # step 1: authenticate
-        user = await security.authenticate_user(email, password, db)
-        if not user:
+        user_info = await security.authenticate_user(email, password, db)
+        if not user_info:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
 
         # step 2: create access token
-        access_token = security.create_access_token({"sub": user.email}, purpose=AccessTokenPurpose.LOGIN)
+        access_token = security.create_access_token({"sub": user_info.email}, purpose=AccessTokenPurpose.LOGIN)
 
         # step 3: format response
         response = LoginResponse(access_token=access_token, token_type="bearer")
@@ -110,13 +110,13 @@ class UserService:
 
         # step 1: Check if user exists
         db_results = await db.execute(select(User).filter_by(id=user_id))
-        user = db_results.scalars().one_or_none()
-        if not user:
+        user_info = db_results.scalars().one_or_none()
+        if not user_info:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist")
 
         # step 2: remove user from db if they exist
         try:
-            await db.delete(user)
+            await db.delete(user_info)
             await db.commit()
 
             # step 3: format the confirmation message
@@ -138,15 +138,33 @@ class UserService:
     async def handle_get_user_by_id(user_id: str, db: AsyncSession) -> UserInfo:
         """Function to fetch a user's information"""
 
+        # step 1: fetch user from database
+        db_results = await db.execute(select(User).filter_by(id=user_id))
+        user_info = db_results.scalars().one_or_none()
+        if not user_info:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist")
         try:
-            # step 1: fetch user from database
-            db_results = await db.execute(select(User).filter_by(id=user_id))
-            user = db_results.scalars().one_or_none()
-            if not user:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User does not exist")
-
             # step 2: return validated user data
-            return UserInfo(**user.__dict__)
+            return UserInfo(**user_info.__dict__)
+        except Exception as e:
+            logger.exception(f"Unexpected error occurred: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Could not fetch user. Please try again or contact support."
+            )
+
+    @staticmethod
+    async def handle_fetch_all_users(db: AsyncSession, start: int = 0, limit: int = 10) -> list[UserInfo]:
+        """Function to fetch all users"""
+        try:
+            logger.info("Fetching all users")
+            db_results = await db.execute(select(User).offset(start).limit(limit))
+            results = db_results.scalars().all()
+            users_response = [
+                UserInfo(**result.__dict__) for result in results
+            ]
+            logger.info("Fetched all users")
+            return users_response
         except SQLAlchemyError as s:
             logger.exception(f"SQLAlchemyError occurred: {str(s)}")
             raise HTTPException(
@@ -159,11 +177,6 @@ class UserService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Could not fetch user. Please try again or contact support."
             )
-
-    @staticmethod
-    async def handle_get_all_users(start: int, limit: int, db: AsyncSession) -> list[UserInfo]:
-        """Function to fetch all users"""
-        ...
 
 
 user_service = UserService()
