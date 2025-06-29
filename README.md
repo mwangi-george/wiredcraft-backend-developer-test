@@ -2,7 +2,7 @@
 
 Welcome to the Wiredcraft Users API project! This API provides robust user management functionality built on **FastAPI, SQLAlchemy, Alembic, asyncpg, and PostgreSQL.**
 
-![api-snapshot.png](src/api-snapshot.png)
+![api-snapshot.png](api-snapshot.png)
 
 ## Features
 
